@@ -31,7 +31,7 @@ jobs:
         fi
 
     - name: Build
-      run: go build -v .
+      run: go build -ldflags='-X main.apiKey=${{ secrets.THEMOVIEDB_APIKEY }}' -v .
 
     - name: Test
-      run: go test -v -ldflags='-X main.apiKey=${{ secrets.THEMOVIEDB_APIKEY }}' .
+      run: env apiKey=${{ secrets.THEMOVIEDB_APIKEY }} go test -v .
