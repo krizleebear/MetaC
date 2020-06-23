@@ -12,6 +12,12 @@ func init() {
 	apiKey = os.Getenv("apiKey")
 }
 
+func assertEquals(t *testing.T, wanted interface{}, got interface{}) {
+	if wanted != got {
+		t.Fatalf("wanted %v but got %v", wanted, got)
+	}
+}
+
 func TestSearch(t *testing.T) {
 	result, err := Search("Cloud Atlas")
 	if err != nil {
@@ -84,10 +90,17 @@ func TestToAtomicParsleyArguments(t *testing.T) {
 }
 
 func Test_getCast(t *testing.T) {
-	credits, err := getMovieCredits(83542)
-	if err != nil {
-		t.Error(err)
-	}
+	credits, _ := getMovieCredits(83542)
 	cast := getCast(credits)
-	fmt.Println(cast)
+
+	assertEquals(t, 5, len(cast))
+	assertEquals(t, "Tom Hanks", cast[0])
+}
+
+func Test_getDirectors(t *testing.T) {
+	credits, _ := getMovieCredits(83542)
+	directors := getDirectors(credits)
+
+	assertEquals(t, 5, len(directors))
+	assertEquals(t, "Tom Tykwer", directors[0])
 }

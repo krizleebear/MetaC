@@ -85,43 +85,6 @@ func downloadPoster(imageURI string) string {
 	return tmpfile.Name()
 }
 
-// ToAtomicParsleyArguments returns the command line arguments for AtomicParsley tool
-// It's your job to delete the poster file after you've used it.
-//searchResult *tmdb.SearchMovies, resultIndex int
-//movie := searchResult.Results[resultIndex]
-func ToAtomicParsleyArguments(movieFile string, movie singleMovie, credits *tmdb.MovieCredits) ([]string, string) {
-
-	year := GetYearFromReleaseDate(movie.ReleaseDate)
-	description := movie.Overview
-	posterFile := downloadPoster(movie.PosterPath)
-
-	arguments := make([]string, 0, 10)
-	arguments = append(arguments, "AtomicParsley")
-	arguments = append(arguments, movieFile)
-
-	arguments = append(arguments, "--overWrite")
-
-	arguments = append(arguments, "--stik")
-	arguments = append(arguments, "Movie")
-
-	arguments = append(arguments, "--title")
-	arguments = append(arguments, movie.Title)
-
-	arguments = append(arguments, "--year")
-	arguments = append(arguments, year)
-
-	arguments = append(arguments, "--longdesc")
-	arguments = append(arguments, description)
-
-	arguments = append(arguments, "--artwork")
-	arguments = append(arguments, "REMOVE_ALL")
-
-	arguments = append(arguments, "--artwork")
-	arguments = append(arguments, posterFile)
-
-	return arguments, posterFile
-}
-
 // GetYearFromReleaseDate or empty string
 func GetYearFromReleaseDate(releaseDate string) string {
 	parsedDate, err := time.Parse("2006-01-02", releaseDate)
@@ -150,7 +113,18 @@ func getCast(credits *tmdb.MovieCredits) []string {
 	return members
 }
 
-func getDirectors(*tmdb.MovieCredits) {
-	//TODO: filter by Department:Directing
-	//TODO: extract max 10 names
+func getDirectors(credits *tmdb.MovieCredits) []string {
+	maxCount := 5
+	members := make([]string, 0, maxCount)
+	expectedDepartment := "Directing"
+	for _, member := range credits.Crew {
+		if len(members) > maxCount-1 {
+			break
+		}
+		if member.Department == expectedDepartment {
+			members = append(members, member.Name)
+		}
+	}
+
+	return members
 }
