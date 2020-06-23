@@ -29,13 +29,13 @@ func main() {
 		panic(err)
 	}
 
+	if movieResults.TotalResults == 0 {
+		panic("No movie result found for title " + title)
+	}
+
 	for i, result := range movieResults.Results {
 		year := GetYearFromReleaseDate(result.ReleaseDate)
 		fmt.Printf("%v) %v (%v)\n", i+1, result.Title, year)
-	}
-
-	if movieResults.TotalResults == 0 {
-		panic("No movie result found for title " + title)
 	}
 
 	movieIndex := 0
@@ -43,9 +43,15 @@ func main() {
 	if movieResults.TotalResults > 1 {
 		movieIndex = readNumberFromTerminal() - 1
 	}
-	fmt.Printf("%+v\n", movieResults.Results[movieIndex])
 
-	args, posterFile := ToAtomicParsleyArguments(movieFile, movieResults, movieIndex)
+	selectedMovie := movieResults.Results[movieIndex]
+
+	fmt.Printf("%+v\n", selectedMovie)
+
+	movieCredits, err := getMovieCredits(selectedMovie.ID)
+	//fmt.Printf("%+v\n", movieCredits)
+
+	args, posterFile := ToAtomicParsleyArguments(movieFile, selectedMovie, movieCredits)
 	defer os.Remove(posterFile)
 
 	fmt.Printf("AtomicParsley %v\n", strings.Join(args, " "))

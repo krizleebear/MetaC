@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 	"path"
-	"strings"
 	"time"
 
 	tmdb "github.com/cyruzin/golang-tmdb"
@@ -17,13 +16,19 @@ var (
 	apiKey = "" //defined via build flag
 )
 
+func initClient() *tmdb.Client {
+	tmdbClient, err := tmdb.Init(apiKey)
+	if err != nil {
+		panic(err)
+	}
+
+	return tmdbClient
+}
+
 // Search TheMovieDB online for a movie of the given string
 // Returns all matched movies.
 func Search(movieName string) (*tmdb.SearchMovies, error) {
-	tmdbClient, err := tmdb.Init(apiKey)
-	if err != nil {
-		return nil, err
-	}
+	tmdbClient := initClient()
 
 	options := map[string]string{
 		"language": "de-DE",
@@ -31,6 +36,29 @@ func Search(movieName string) (*tmdb.SearchMovies, error) {
 	}
 
 	return tmdbClient.GetSearchMovies(movieName, options)
+}
+
+func getPosterSizes() []string {
+	tmdbClient := initClient()
+	api, _ := tmdbClient.GetConfigurationAPI()
+	return api.Images.PosterSizes
+}
+
+type singleMovie struct {
+	VoteCount        int64   `json:"vote_count"`
+	ID               int64   `json:"id"`
+	Video            bool    `json:"video"`
+	VoteAverage      float32 `json:"vote_average"`
+	Title            string  `json:"title"`
+	Popularity       float32 `json:"popularity"`
+	PosterPath       string  `json:"poster_path"`
+	OriginalLanguage string  `json:"original_language"`
+	OriginalTitle    string  `json:"original_title"`
+	GenreIDs         []int64 `json:"genre_ids"`
+	BackdropPath     string  `json:"backdrop_path"`
+	Adult            bool    `json:"adult"`
+	Overview         string  `json:"overview"`
+	ReleaseDate      string  `json:"release_date"`
 }
 
 func downloadPoster(imageURI string) string {
@@ -41,8 +69,8 @@ func downloadPoster(imageURI string) string {
 		log.Fatal(err)
 	}
 
-	//https://image.tmdb.org/t/p/w500/687NOelgrgtsKEFsotLCH0YZn6H.jpg
-	resp, err := http.Get("https://image.tmdb.org/t/p/w500" + imageURI)
+	//https://image.tmdb.org/t/p/original/687NOelgrgtsKEFsotLCH0YZn6H.jpg
+	resp, err := http.Get("https://image.tmdb.org/t/p/original" + imageURI)
 	if err != nil {
 		panic(err)
 	}
@@ -59,10 +87,12 @@ func downloadPoster(imageURI string) string {
 
 // ToAtomicParsleyArguments returns the command line arguments for AtomicParsley tool
 // It's your job to delete the poster file after you've used it.
-func ToAtomicParsleyArguments(movieFile string, searchResult *tmdb.SearchMovies, resultIndex int) ([]string, string) {
-	movie := searchResult.Results[resultIndex]
+//searchResult *tmdb.SearchMovies, resultIndex int
+//movie := searchResult.Results[resultIndex]
+func ToAtomicParsleyArguments(movieFile string, movie singleMovie, credits *tmdb.MovieCredits) ([]string, string) {
+
 	year := GetYearFromReleaseDate(movie.ReleaseDate)
-	description := strings.ReplaceAll(movie.Overview, "\"", "\\\"")
+	description := movie.Overview
 	posterFile := downloadPoster(movie.PosterPath)
 
 	arguments := make([]string, 0, 10)
@@ -99,4 +129,28 @@ func GetYearFromReleaseDate(releaseDate string) string {
 		return ""
 	}
 	return parsedDate.Format("2006")
+}
+
+func getMovieCredits(movieID int64) (*tmdb.MovieCredits, error) {
+	tmdbClient := initClient()
+
+	return tmdbClient.GetMovieCredits(int(movieID), nil)
+}
+
+// getCast extracts the first names of the full cast
+func getCast(credits *tmdb.MovieCredits) []string {
+	maxCount := 5
+	members := make([]string, 0, maxCount)
+	for i, member := range credits.Cast {
+		if i > maxCount-1 {
+			break
+		}
+		members = append(members, member.Name)
+	}
+	return members
+}
+
+func getDirectors(*tmdb.MovieCredits) {
+	//TODO: filter by Department:Directing
+	//TODO: extract max 10 names
 }
