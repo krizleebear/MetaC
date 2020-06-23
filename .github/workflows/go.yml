@@ -34,4 +34,4 @@ jobs:
       run: go build -v .
 
     - name: Test
-      run: go test -v -ldflags='-X main.apiKey=${{ secrects.THEMOVIEDB_APIKEY }}' .
+      run: go test -v -ldflags='-X main.apiKey=${{ secrets.THEMOVIEDB_APIKEY }}' .
