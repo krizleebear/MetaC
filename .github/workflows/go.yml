@@ -34,7 +34,13 @@ jobs:
       run: go build -ldflags='-X main.apiKey=${{ secrets.THEMOVIEDB_APIKEY }}' -v .
       
     - name: BuildArmV7
-      run: env GOARCH=arm GOARM=7 GOOS=linux go build -ldflags='-X main.apiKey=${{ secrets.THEMOVIEDB_APIKEY }}' -o MetaC_armv7
+      run: env GOARCH=arm GOARM=7 GOOS=linux go build -ldflags='-X main.apiKey=${{ secrets.THEMOVIEDB_APIKEY }}' -o output/MetaC_armv7
+
+    - name: BuildWindows64
+      run: env GOARCH=amd64 GOOS=windows go build -ldflags='-X main.apiKey=${{ secrets.THEMOVIEDB_APIKEY }}' -o output/MetaC_x64.exe
+
+    - name: BuildOSX64
+      run: env GOARCH=amd64 GOOS=darwin go build -ldflags='-X main.apiKey=${{ secrets.THEMOVIEDB_APIKEY }}' -o output/MetaC_OSX_64
 
     - name: ls
       run: pwd; ls -la
