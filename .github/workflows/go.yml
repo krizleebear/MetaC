@@ -33,20 +33,23 @@ jobs:
     - name: Build
       run: go build -ldflags='-X main.apiKey=${{ secrets.THEMOVIEDB_APIKEY }}' -v .
       
-    - name: BuildArmV7
-      run: env GOARCH=arm GOARM=7 GOOS=linux go build -ldflags='-X main.apiKey=${{ secrets.THEMOVIEDB_APIKEY }}' -o output/MetaC_armv7
+    - name: Test
+      run: env apiKey=${{ secrets.THEMOVIEDB_APIKEY }} go test -v .
+
+    - name: BuildLinux64
+      run: env GOARCH=amd64 GOOS=linux go build -ldflags='-X main.apiKey=${{ secrets.THEMOVIEDB_APIKEY }}' -o output/MetaC_linux_x64
+
+    - name: BuildLinuxArmV7
+      run: env GOARCH=arm GOARM=7 GOOS=linux go build -ldflags='-X main.apiKey=${{ secrets.THEMOVIEDB_APIKEY }}' -o output/MetaC_linux_armv7
 
     - name: BuildWindows64
-      run: env GOARCH=amd64 GOOS=windows go build -ldflags='-X main.apiKey=${{ secrets.THEMOVIEDB_APIKEY }}' -o output/MetaC_x64.exe
+      run: env GOARCH=amd64 GOOS=windows go build -ldflags='-X main.apiKey=${{ secrets.THEMOVIEDB_APIKEY }}' -o output/MetaC_win_x64.exe
 
     - name: BuildOSX64
       run: env GOARCH=amd64 GOOS=darwin go build -ldflags='-X main.apiKey=${{ secrets.THEMOVIEDB_APIKEY }}' -o output/MetaC_OSX_64
 
     - name: ls
-      run: pwd; ls -la
-
-    - name: Test
-      run: env apiKey=${{ secrets.THEMOVIEDB_APIKEY }} go test -v .
+      run: cd output; pwd; ls -la
       
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v2
