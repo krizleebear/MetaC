@@ -32,6 +32,12 @@ jobs:
 
     - name: Build
       run: go build -ldflags='-X main.apiKey=${{ secrets.THEMOVIEDB_APIKEY }}' -v .
+      
+    - name: BuildArmV7
+      run: env GOARCH=arm GOARM=7 GOOS=linux go build -ldflags='-X main.apiKey=${{ secrets.THEMOVIEDB_APIKEY }}' -o MetaC_armv7
+
+    - name: ls
+      run: pwd; ls -la
 
     - name: Test
       run: env apiKey=${{ secrets.THEMOVIEDB_APIKEY }} go test -v .
