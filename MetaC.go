@@ -10,27 +10,19 @@ import (
 	"strconv"
 	"strings"
 	"syscall"
+
+	tmdb "github.com/cyruzin/golang-tmdb"
 )
 
 func main() {
-	movieFile, _ := filepath.Abs(os.Args[1])
-	fmt.Println(movieFile)
-	_, err := os.Stat(movieFile)
-	if err != nil {
-		panic(err)
-	}
 
-	fileName := filepath.Base(movieFile)
-	fileExt := filepath.Ext(movieFile)
-	title := strings.TrimSuffix(fileName, fileExt)
+	movieFile := getFileFromArgs()
+	title := getTitleFromFile(movieFile)
 
-	movieResults, err := Search(path.Base(title))
-	if err != nil {
-		panic(err)
-	}
+	movieResults := search(title)
 
 	if movieResults.TotalResults == 0 {
-		panic("No movie result found for title " + title)
+		title, movieResults = askForTitle(title, movieResults)
 	}
 
 	for i, result := range movieResults.Results {
@@ -39,8 +31,8 @@ func main() {
 	}
 
 	movieIndex := 0
-	fmt.Printf("%v results found. Please select the correct movie.\n", movieResults.TotalResults)
 	if movieResults.TotalResults > 1 {
+		fmt.Printf("%v results found. Please select the correct movie.\n", movieResults.TotalResults)
 		movieIndex = readNumberFromTerminal() - 1
 	}
 
@@ -48,14 +40,53 @@ func main() {
 
 	fmt.Printf("%+v\n", selectedMovie)
 
-	movieCredits, err := getMovieCredits(selectedMovie.ID)
-	//fmt.Printf("%+v\n", movieCredits)
+	movieCredits, _ := getMovieCredits(selectedMovie.ID)
+	cast := getCast(movieCredits)
+	fmt.Printf("Cast: %v\n", cast)
 
 	args, posterFile := ToAtomicParsleyArguments(movieFile, selectedMovie, movieCredits)
 	defer os.Remove(posterFile)
 
 	fmt.Printf("AtomicParsley %v\n", strings.Join(args, " "))
+	fmt.Println("Press enter to continue (or ctrl+c to abort)...")
+	readTokenFromTerminal()
+
 	localExec("AtomicParsley", args)
+}
+
+func askForTitle(title string, movieResults *tmdb.SearchMovies) (string, *tmdb.SearchMovies) {
+	for movieResults.TotalResults == 0 {
+		fmt.Printf("No movie result found for '%v'. Please enter an alternative title\n> ", title)
+		title = readTokenFromTerminal()
+		movieResults = search(title)
+	}
+	return title, movieResults
+}
+
+func getFileFromArgs() string {
+	movieFile, _ := filepath.Abs(os.Args[1])
+	fmt.Println(movieFile)
+	_, err := os.Stat(movieFile)
+	if err != nil {
+		panic(err)
+	}
+
+	return movieFile
+}
+
+func getTitleFromFile(movieFile string) string {
+	fileName := filepath.Base(movieFile)
+	fileExt := filepath.Ext(movieFile)
+	title := strings.TrimSuffix(fileName, fileExt)
+	return path.Base(title)
+}
+
+func search(title string) *tmdb.SearchMovies {
+	movieResults, err := Search(title)
+	if err != nil {
+		panic(err)
+	}
+	return movieResults
 }
 
 func localExec(localBinary string, args []string) {
@@ -74,10 +105,14 @@ func localExec(localBinary string, args []string) {
 	}
 }
 
-func readNumberFromTerminal() int {
+func readTokenFromTerminal() string {
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Scan()
-	token := scanner.Text()
+	return scanner.Text()
+}
+
+func readNumberFromTerminal() int {
+	token := readTokenFromTerminal()
 
 	number, err := strconv.Atoi(token)
 	if err != nil {
