@@ -75,6 +75,9 @@ func downloadPoster(imageURI string) string {
 		panic(err)
 	}
 	defer resp.Body.Close()
+	if resp.StatusCode >= 400 {
+		return ""
+	}
 
 	b, _ := io.Copy(tmpfile, resp.Body)
 	fmt.Println("Poster file size: ", b)
