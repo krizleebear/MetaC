@@ -1,6 +1,10 @@
 package main
 
-import tmdb "github.com/cyruzin/golang-tmdb"
+import (
+	"regexp"
+
+	tmdb "github.com/cyruzin/golang-tmdb"
+)
 
 // ToAtomicParsleyArguments returns the command line arguments for AtomicParsley tool
 // It's your job to delete the poster file after you've used it.
@@ -28,13 +32,21 @@ func ToAtomicParsleyArguments(movieFile string, movie singleMovie, credits *tmdb
 	arguments = append(arguments, year)
 
 	arguments = append(arguments, "--longdesc")
+	description = removeDuplicateWhitespace(description)
 	arguments = append(arguments, description)
 
-	arguments = append(arguments, "--artwork")
-	arguments = append(arguments, "REMOVE_ALL")
+	if posterFile != "" {
+		arguments = append(arguments, "--artwork")
+		arguments = append(arguments, "REMOVE_ALL")
 
-	arguments = append(arguments, "--artwork")
-	arguments = append(arguments, posterFile)
+		arguments = append(arguments, "--artwork")
+		arguments = append(arguments, posterFile)
+	}
 
 	return arguments, posterFile
+}
+
+func removeDuplicateWhitespace(s string) string {
+	space := regexp.MustCompile(`\s+`)
+	return space.ReplaceAllString(s, " ")
 }
