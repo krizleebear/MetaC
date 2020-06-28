@@ -3,15 +3,14 @@ Automatic tagging of MP4 video directly from the command line. Front end for Ato
 
 # Architecture
 
-<div hidden>
-```
+
+<!--
 @startuml components
 Terminal - [MetaC]
 [MetaC] ..> TheMovieDB : get meta
 [MetaC] ..> AtomicParsley : run
 @enduml
-```
-</div>
+-->
 
 ![](components.svg)
 
