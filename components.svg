@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="202px" preserveAspectRatio="none" style="width:261px;height:202px;" version="1.1" viewBox="0 0 261 202" width="261px" zoomAndPan="magnify"><defs><filter height="300%" id="f1022v1hvqmuas" width="300%" x="-1" y="-1"><feGaussianBlur result="blurOut" stdDeviation="2.0"/><feColorMatrix in="blurOut" result="blurOut2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0"/><feOffset dx="4.0" dy="4.0" in="blurOut2" result="blurOut3"/><feBlend in="SourceGraphic" in2="blurOut3" mode="normal"/></filter></defs><g><!--MD5=[f86d083f7526329011f4b6f057bca77a]
+entity Terminal--><ellipse cx="38" cy="30" fill="#FEFECE" filter="url(#f1022v1hvqmuas)" rx="8" ry="8" style="stroke: #A80036; stroke-width: 2.0;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="63" x="6.5" y="59.9951">Terminal</text><!--MD5=[5669b3f04a20b141009fdb63163f4e5c]
+entity MetaC--><rect fill="#FEFECE" filter="url(#f1022v1hvqmuas)" height="46.2969" style="stroke: #A80036; stroke-width: 1.5;" width="86" x="82" y="7"/><rect fill="#FEFECE" height="10" style="stroke: #A80036; stroke-width: 1.5;" width="15" x="148" y="12"/><rect fill="#FEFECE" height="2" style="stroke: #A80036; stroke-width: 1.5;" width="4" x="146" y="14"/><rect fill="#FEFECE" height="2" style="stroke: #A80036; stroke-width: 1.5;" width="4" x="146" y="18"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="46" x="97" y="39.9951">MetaC</text><!--MD5=[8492182c10e6dc0fbe1c5b4b9cc651a0]
+entity TheMovieDB--><ellipse cx="51" cy="159" fill="#FEFECE" filter="url(#f1022v1hvqmuas)" rx="8" ry="8" style="stroke: #A80036; stroke-width: 2.0;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="90" x="6" y="188.9951">TheMovieDB</text><!--MD5=[6463a6927c6033b8b1d3019c71cd64a8]
+entity AtomicParsley--><ellipse cx="198" cy="159" fill="#FEFECE" filter="url(#f1022v1hvqmuas)" rx="8" ry="8" style="stroke: #A80036; stroke-width: 2.0;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="103" x="146.5" y="188.9951">AtomicParsley</text><!--MD5=[9b24f90e66c2c8b1c1f1d0737e8d8127]
+link Terminal to MetaC--><path d="M47.1758,30 C58.7278,30 70.2798,30 81.8319,30 " fill="none" id="Terminal-MetaC" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[63c89fcb4a6958f161f52d914917dbb3]
+link MetaC to TheMovieDB--><path d="M106.092,53.23 C98.991,62.156 91.1554,72.747 85,83 C72.5713,103.7032 61.7423,129.7361 55.8125,145.0531 " fill="none" id="MetaC-&gt;TheMovieDB" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#A80036" points="53.9942,149.8136,60.9423,142.8334,55.7783,145.1427,53.469,139.9788,53.9942,149.8136" style="stroke: #A80036; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="59" x="86" y="96.0669">get meta</text><!--MD5=[7b343a5965d93f29cda30a9b2048a2b3]
+link MetaC to AtomicParsley--><path d="M137.716,53.122 C153.058,79.814 178.332,123.7838 190.71,145.3179 " fill="none" id="MetaC-&gt;AtomicParsley" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#A80036" points="193.288,149.8016,192.2702,140.0055,190.796,145.4669,185.3346,143.9926,193.288,149.8016" style="stroke: #A80036; stroke-width: 1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs" textLength="21" x="164" y="96.0669">run</text><!--MD5=[b255b86da458713e1c8660ead93265c1]
+@startuml
+Terminal - [MetaC]
+[MetaC] ..> TheMovieDB : get meta
+[MetaC] ..> AtomicParsley : run
+@enduml
+
+PlantUML version 1.2020.15beta1(Unknown compile time)
+(GPL source distribution)
+Java Runtime: Java(TM) SE Runtime Environment
+JVM: Java HotSpot(TM) 64-Bit Server VM
+Default Encoding: UTF-8
+Language: en
+Country: US
+--></g></svg>
