@@ -12,6 +12,7 @@ Terminal - [MetaC]
 @enduml
 ```
 </div>
+
 ![](components.svg)
 
 # Usage
