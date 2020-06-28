@@ -3,7 +3,6 @@ Automatic tagging of MP4 video directly from the command line. Front end for Ato
 
 # Architecture
 
-
 <!--
 @startuml components
 Terminal - [MetaC]
@@ -13,6 +12,9 @@ Terminal - [MetaC]
 -->
 
 ![](components.svg)
+
+# Installation
+Before using MetaC you must install AtomicParsley on your system.
 
 # Usage
 ```
