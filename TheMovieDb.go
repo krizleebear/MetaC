@@ -7,6 +7,8 @@ import (
 	"log"
 	"net/http"
 	"path"
+	"regexp"
+	"strings"
 	"time"
 
 	tmdb "github.com/cyruzin/golang-tmdb"
@@ -30,12 +32,14 @@ func initClient() *tmdb.Client {
 func Search(movieName string) (*tmdb.SearchMovies, error) {
 	tmdbClient := initClient()
 
+	name, year := splitNameAndYear(movieName)
+
 	options := map[string]string{
 		"language": "de-DE",
-		//"year": "2008",
+		"year":     year,
 	}
 
-	return tmdbClient.GetSearchMovies(movieName, options)
+	return tmdbClient.GetSearchMovies(name, options)
 }
 
 func getPosterSizes() []string {
@@ -130,4 +134,17 @@ func getDirectors(credits *tmdb.MovieCredits) []string {
 	}
 
 	return members
+}
+
+func splitNameAndYear(movieName string) (string, string) {
+	year := ""
+
+	re := regexp.MustCompile(`\([0-9]{4}\)`)
+	loc := re.FindStringIndex(movieName)
+	if loc != nil {
+		year = movieName[loc[0]+1 : loc[1]-1]
+		movieName = strings.TrimSpace(movieName[0:loc[0]])
+	}
+
+	return movieName, year
 }

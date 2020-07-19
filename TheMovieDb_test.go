@@ -74,3 +74,17 @@ func Test_getDirectors(t *testing.T) {
 	assertEquals(t, 5, len(directors))
 	assertEquals(t, "Tom Tykwer", directors[0])
 }
+
+func Test_splitNameAndYear(t *testing.T) {
+	n, y := splitNameAndYear("")
+	assertEquals(t, "", n)
+	assertEquals(t, "", y)
+
+	n, y = splitNameAndYear("Blabla")
+	assertEquals(t, "Blabla", n)
+	assertEquals(t, "", y)
+
+	n, y = splitNameAndYear("Blabla (2002)")
+	assertEquals(t, "Blabla", n)
+	assertEquals(t, "2002", y)
+}
