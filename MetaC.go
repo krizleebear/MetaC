@@ -54,7 +54,7 @@ func main() {
 	localExec("AtomicParsley", args)
 }
 
-func askForTitle(title string, movieResults *tmdb.SearchMovies) (string, *tmdb.SearchMovies) {
+func askForTitle(title string, movieResults *tmdb.SearchMulti) (string, *tmdb.SearchMulti) {
 	for movieResults.TotalResults == 0 {
 		fmt.Printf("No movie result found for '%v'. Please enter an alternative title\n> ", title)
 		title = readTokenFromTerminal()
@@ -81,8 +81,8 @@ func getTitleFromFile(movieFile string) string {
 	return path.Base(title)
 }
 
-func search(title string) *tmdb.SearchMovies {
-	movieResults, err := Search(title)
+func search(title string) *tmdb.SearchMulti {
+	movieResults, err := SearchMulti(title)
 	if err != nil {
 		panic(err)
 	}

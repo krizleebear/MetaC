@@ -23,7 +23,11 @@ func ToAtomicParsleyArguments(movieFile string, movie singleMovie, credits *tmdb
 	arguments = append(arguments, "--overWrite")
 
 	arguments = append(arguments, "--stik")
-	arguments = append(arguments, "Movie")
+	if movie.MediaType == "tv" {
+		arguments = append(arguments, "TV Show")
+	} else {
+		arguments = append(arguments, "Movie")
+	}
 
 	arguments = append(arguments, "--title")
 	arguments = append(arguments, movie.Title)

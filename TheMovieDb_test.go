@@ -31,6 +31,22 @@ func TestSearch(t *testing.T) {
 	}
 }
 
+func TestSearchMulti(t *testing.T) {
+
+	expectedTitle := "Unsere Mütter, unsere Väter"
+	response, err := SearchMulti(expectedTitle)
+	if err != nil {
+		t.Error(err)
+	}
+
+	result := response.Results[0]
+	fmt.Printf("%+v\n", result)
+
+	// Respective attributes of TV Show and Movie must be equal
+	assertEquals(t, result.ReleaseDate, result.FirstAirDate)
+	assertEquals(t, result.Title, result.Name)
+}
+
 func TestDownload(t *testing.T) {
 	filename := downloadPoster("/687NOelgrgtsKEFsotLCH0YZn6H.jpg")
 	defer os.Remove(filename)
