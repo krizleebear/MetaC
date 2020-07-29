@@ -16,6 +16,18 @@ func assertEquals(t *testing.T, wanted interface{}, got interface{}) {
 	}
 }
 
+func assertNil(t *testing.T, got interface{}) {
+	if got != nil {
+		t.Fatalf("expected nil, but got %v", got)
+	}
+}
+
+func assertNotNil(t *testing.T, got interface{}) {
+	if got == nil {
+		t.Fatalf("expected a value, but got nil")
+	}
+}
+
 func TestSearch(t *testing.T) {
 	result, err := Search("Cloud Atlas")
 	if err != nil {
@@ -103,4 +115,16 @@ func Test_splitNameAndYear(t *testing.T) {
 	n, y = splitNameAndYear("Blabla (2002)")
 	assertEquals(t, "Blabla", n)
 	assertEquals(t, "2002", y)
+}
+
+func Test_extractEpisodeID(t *testing.T) {
+	ep, err := extractEpisodeID("")
+	assertEquals(t, episodeID{}, ep)
+	assertNotNil(t, err)
+
+	ep, err = extractEpisodeID("S01E02")
+	assertEquals(t, episodeID{1, 2}, ep)
+
+	ep, err = extractEpisodeID("bla - S03E04 - abc")
+	assertEquals(t, episodeID{3, 4}, ep)
 }

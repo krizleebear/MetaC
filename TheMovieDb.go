@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -8,6 +9,7 @@ import (
 	"net/http"
 	"path"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -203,4 +205,23 @@ func splitNameAndYear(movieName string) (string, string) {
 	}
 
 	return movieName, year
+}
+
+type episodeID struct {
+	seasonNumber  int
+	episodeNumber int
+}
+
+func extractEpisodeID(fileName string) (episodeID, error) {
+	ep := episodeID{}
+
+	re := regexp.MustCompile(`.*S([0-9]{2})E([0-9]{2}).*`)
+	matches := re.FindStringSubmatch(fileName)
+	if matches == nil {
+		return ep, errors.New("Couldn't identify episode number for " + fileName)
+	}
+
+	seasonNumber, _ := strconv.Atoi(matches[1])
+	episodeNumber, _ := strconv.Atoi(matches[2])
+	return episodeID{seasonNumber, episodeNumber}, nil
 }
