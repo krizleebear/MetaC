@@ -47,7 +47,9 @@ func Search(movieName string) (*tmdb.SearchMovies, error) {
 // GetMovieDetails returns all details for the given movie ID.
 func GetMovieDetails(id int) (*tmdb.MovieDetails, error) {
 	tmdbClient := initClient()
-	options := map[string]string{}
+	options := map[string]string{
+		"language": "de-DE",
+	}
 	details, error := tmdbClient.GetMovieDetails(id, options)
 
 	return details, error
