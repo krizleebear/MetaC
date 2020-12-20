@@ -16,6 +16,12 @@ func assertEquals(t *testing.T, wanted interface{}, got interface{}) {
 	}
 }
 
+func assertNotEquals(t *testing.T, notWanted interface{}, got interface{}) {
+	if notWanted == got {
+		t.Fatalf("didn't expect it, but got %v", got)
+	}
+}
+
 func assertNil(t *testing.T, got interface{}) {
 	if got != nil {
 		t.Fatalf("expected nil, but got %v", got)
@@ -26,6 +32,16 @@ func assertNotNil(t *testing.T, got interface{}) {
 	if got == nil {
 		t.Fatalf("expected a value, but got nil")
 	}
+}
+
+func assertSliceContains(t *testing.T, wanted interface{}, got []string) {
+	assertNotNil(t, got)
+	for _, element := range got {
+		if wanted == element {
+			return
+		}
+	}
+	t.Fatalf("wanted %v but got %v", wanted, got)
 }
 
 func TestSearch(t *testing.T) {
@@ -79,28 +95,17 @@ func Test_getPosterSizes(t *testing.T) {
 }
 
 func Test_getMovieCredits(t *testing.T) {
-	credits, err := getMovieCredits(83542)
-	if err != nil {
-		t.Error(err)
-	}
+
+	credits := getCastMembers(83542, "movie")
 
 	fmt.Println(credits)
 }
 
 func Test_getCast(t *testing.T) {
-	credits, _ := getMovieCredits(83542)
-	cast := getCast(credits)
+	cast := getCastMembers(83542, "movie")
 
 	assertEquals(t, 5, len(cast))
 	assertEquals(t, "Tom Hanks", cast[0])
-}
-
-func Test_getDirectors(t *testing.T) {
-	credits, _ := getMovieCredits(83542)
-	directors := getDirectors(credits)
-
-	assertEquals(t, 5, len(directors))
-	assertEquals(t, "Tom Tykwer", directors[0])
 }
 
 func Test_splitNameAndYear(t *testing.T) {
@@ -127,4 +132,25 @@ func Test_extractEpisodeID(t *testing.T) {
 
 	ep, err = extractEpisodeID("bla - S03E04 - abc")
 	assertEquals(t, episodeID{3, 4}, ep)
+}
+
+func Test_GetMovieDetails(t *testing.T) {
+	detail, err := GetMovieDetails(715025)
+	if err != nil {
+		t.Error(err)
+	}
+
+	fmt.Printf("%v", detail)
+
+	assertEquals(t, "Heaven", detail.Title)
+	assertNotNil(t, detail.Overview)
+	assertNotEquals(t, "", detail.Overview)
+	//detail.Overview
+}
+
+func Test_GetShowDetails(t *testing.T) {
+
+	cast := getCastMembers(94495, "tv")
+	assertNotNil(t, cast)
+	assertSliceContains(t, "Kristofer Hivju", cast)
 }

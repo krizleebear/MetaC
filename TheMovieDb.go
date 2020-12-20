@@ -44,6 +44,15 @@ func Search(movieName string) (*tmdb.SearchMovies, error) {
 	return tmdbClient.GetSearchMovies(name, options)
 }
 
+// GetMovieDetails returns all details for the given movie ID.
+func GetMovieDetails(id int) (*tmdb.MovieDetails, error) {
+	tmdbClient := initClient()
+	options := map[string]string{}
+	details, error := tmdbClient.GetMovieDetails(id, options)
+
+	return details, error
+}
+
 // SearchMulti performs a combined search for both movies and tv shows
 func SearchMulti(title string) (*tmdb.SearchMulti, error) {
 	tmdbClient := initClient()
@@ -51,8 +60,9 @@ func SearchMulti(title string) (*tmdb.SearchMulti, error) {
 	name, year := splitNameAndYear(title)
 
 	options := map[string]string{
-		"language": "de-DE",
-		"year":     year,
+		"language":      "de-DE",
+		"year":          year,
+		"include_adult": "false",
 	}
 
 	// normalize fields between movies and tv show results
@@ -159,14 +169,34 @@ func GetYearFromReleaseDate(releaseDate string) string {
 	return parsedDate.Format("2006")
 }
 
-func getMovieCredits(movieID int64) (*tmdb.MovieCredits, error) {
+func getCastMembers(mediaID int, mediaType string) []string {
 	tmdbClient := initClient()
-
-	return tmdbClient.GetMovieCredits(int(movieID), nil)
+	switch mediaType {
+	case "tv":
+		tvCredit, _ := tmdbClient.GetTVCredits(mediaID, nil)
+		return getTVCast(tvCredit)
+	case "movie":
+		movieCredits, _ := tmdbClient.GetMovieCredits(mediaID, nil)
+		return getCast(movieCredits)
+	default:
+		return make([]string, 0)
+	}
 }
 
 // getCast extracts the first names of the full cast
 func getCast(credits *tmdb.MovieCredits) []string {
+	maxCount := 5
+	members := make([]string, 0, maxCount)
+	for i, member := range credits.Cast {
+		if i > maxCount-1 {
+			break
+		}
+		members = append(members, member.Name)
+	}
+	return members
+}
+
+func getTVCast(credits *tmdb.TVCredits) []string {
 	maxCount := 5
 	members := make([]string, 0, maxCount)
 	for i, member := range credits.Cast {

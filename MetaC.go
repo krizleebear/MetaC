@@ -19,6 +19,10 @@ func main() {
 	movieFile := getFileFromArgs()
 	title := getTitleFromFile(movieFile)
 
+	process(movieFile, title)
+}
+
+func process(movieFile string, title string) {
 	movieResults := search(title)
 
 	if movieResults.TotalResults == 0 {
@@ -40,11 +44,10 @@ func main() {
 
 	fmt.Printf("%+v\n", selectedMovie)
 
-	movieCredits, _ := getMovieCredits(selectedMovie.ID)
-	cast := getCast(movieCredits)
+	cast := getCastMembers(int(selectedMovie.ID), selectedMovie.MediaType)
 	fmt.Printf("Cast: %v\n", cast)
 
-	args, posterFile := ToAtomicParsleyArguments(movieFile, selectedMovie, movieCredits)
+	args, posterFile := ToAtomicParsleyArguments(movieFile, selectedMovie, cast)
 	defer os.Remove(posterFile)
 
 	fmt.Printf("AtomicParsley %v\n", strings.Join(args, " "))

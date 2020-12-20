@@ -2,15 +2,13 @@ package main
 
 import (
 	"regexp"
-
-	tmdb "github.com/cyruzin/golang-tmdb"
 )
 
 // ToAtomicParsleyArguments returns the command line arguments for AtomicParsley tool
 // It's your job to delete the poster file after you've used it.
 //searchResult *tmdb.SearchMovies, resultIndex int
 //movie := searchResult.Results[resultIndex]
-func ToAtomicParsleyArguments(movieFile string, movie singleMovie, credits *tmdb.MovieCredits) ([]string, string) {
+func ToAtomicParsleyArguments(movieFile string, movie singleMovie, cast []string) ([]string, string) {
 
 	year := GetYearFromReleaseDate(movie.ReleaseDate)
 	description := movie.Overview
